@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <!-- Properties -->
+    <property name="log.base.path" value="${LOG_PATH:-./logs}"/>
+    <property name="log.base.name" value="cactus-bucket"/>
+    <property name="log.pattern" value="[%blue(%d{yyyy-MM-dd HH:mm:ss.SSSZ})][%thread][%logger{50}][%highlight(%level)] %msg%n"/>
+    <property name="env" value="${ENV:-local}"/>
+
+    <!-- Console Appender -->
+    <appender name="CONSOLE_LOCAL" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.base.path}/${log.base.name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log.base.path}/${log.base.name}.log.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>5</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root Logger -->
+    <root level="info">
+        <appender-ref ref="FILE" />
+    </root>
+    <if condition='property("env").equals("local")'>
+        <then>
+            <root level="info">
+                <appender-ref ref="CONSOLE_LOCAL" />
+            </root >
+        </then>
+    </if>
+</configuration>
